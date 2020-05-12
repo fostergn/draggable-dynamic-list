@@ -1,5 +1,6 @@
 import React from 'react';
-import { Formik } from 'formik';
+import { Formik, Field } from 'formik';
+import hasIn from 'lodash.hasin';
 import { action } from '@storybook/addon-actions';
 import DraggableDynamicList from '../lib/DraggableDynamicList';
 
@@ -16,7 +17,7 @@ export const ToStorybook = () => {
   return (
     <Formik
       initialValues={initialValues}
-      onSubmit={(values) => action('submit', values)}
+      onSubmit={action('submit')}
     >
     {
       ({
@@ -33,7 +34,49 @@ export const ToStorybook = () => {
                 type: 'text',
               },
             ]}
-          />
+          >
+            {
+              ({
+                fieldName,
+                itemId,
+                name,
+                type,
+                setValue,
+                value,
+                index,
+                error
+              }) => (
+                <>
+                  <label 
+                    htmlFor={`${fieldName}.${index}.${name}`}>
+                      {name}
+                  </label>
+                  <Field
+                    value={value}
+                    onChange={({ target: { value }}) => setValue(value, name, itemId)}
+                    name={`${fieldName}.${index}.${name}`}
+                    type={type}
+                  />
+                  {
+                    error ? (
+                      <div 
+                        style={{
+                          position: 'absolute',
+                          top: 0,
+                          right: 0
+                        }}>                                          
+                      <div 
+                        style={{ color: 'red', fontSize: '.65rem' }} 
+                        meta={{ touched: true, error }} 
+                      />
+                      </div>
+                    ) : null
+                  } 
+                </>
+              )
+            }
+          </DraggableDynamicList>
+          <input style={{marginTop: 20}} type="submit" value="Submit" />
         </form>
       )}
     </Formik>
